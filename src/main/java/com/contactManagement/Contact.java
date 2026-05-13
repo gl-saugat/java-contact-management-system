@@ -18,7 +18,7 @@ public class Contact {
         return this.name;
     }
 
-    public String getphone(){
+    public String getPhone(){
         return this.phone;
     }
 
@@ -42,8 +42,12 @@ public class Contact {
         this.email = newMail;
     }
 
+    public boolean compareKeyword(String keyword){
+        return(getName().contains(keyword) || getPhone().contains(keyword)|| getEmail().contains(keyword));
+    }
+
     @Override
     public String toString(){
-        return "ID: " + this.id + " Name: " +this.name+ " Phone: " + this.phone + "E-mail: " + this.email;
+        return this.id + " Name: " +this.name+ " Phone: " + this.phone + "E-mail: " + this.email;
     }
 }

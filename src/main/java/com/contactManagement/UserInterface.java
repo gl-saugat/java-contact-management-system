@@ -1,6 +1,9 @@
 package com.contactManagement;
 
+import java.util.List;
 import java.util.Scanner;
+
+
 
 public class UserInterface {
     public Scanner scanner;
@@ -23,18 +26,28 @@ public class UserInterface {
                     break;
 
                 case 2:
-                    contactDeleteMenu();
+                    if(!(process.getAllContacts().isEmpty())){
+                        contactDeleteMenu();
+                    }
+                    System.out.println("No tasks yet!");
                     break;
 
                 case 3:
-                    updateContactMenu();
+                    if(!(process.getAllContacts().isEmpty())){
+                        updateContactMenu();
+                    }
+                    System.out.println("No tasks yet!");
                     break;
 
                 case 4:
-                    process.getAllContacts().forEach(System.out::println);
+                    printTasks();
                     break;
 
                 case 5:
+                    searchContacts();
+                    break;
+
+                case 6:
                     System.out.println("Thanks for trying the app.");
                     return;
             }
@@ -50,7 +63,8 @@ public class UserInterface {
                 2. Delete Contact
                 3. Update Contact
                 4. Show all Contacts
-                5. Exit
+                5. Search Contact
+                6. Exit
                 """);
     }
 
@@ -61,13 +75,14 @@ public class UserInterface {
         String phone = getStringInput();
         System.out.println("Enter their mail address: ");
         String mail = getStringInput();
-
-        process.addContact("1",name, phone, mail);
+        int id = process.getNextNumber();
+        process.addContact(id ,name, phone, mail);
     }
 
     public void contactDeleteMenu(){
-        System.out.println("Enter the ID of the task you want to delete.");
-        String id = scanner.nextLine();
+        System.out.println("Enter the ID of the task you want to delete. (NO need for '#')");
+        printTasks();
+        int id = getIDOptions();
         try{
             process.deleteContact(id);
             System.out.println("Task deleted.");
@@ -85,10 +100,11 @@ public class UserInterface {
     }
 
     private void updateContactMenu(){
-        String updateID = "";
+        int updateID;
         while(true){
-            System.out.println("Enter the ID of the contact you'd want to update:");
-            updateID = getStringInput();
+            System.out.println("Enter the ID of the contact you'd want to update: (NO need for '#')");
+            printTasks();
+            updateID = getIDOptions();
             if(process.getTaskById(updateID).isPresent()){
                 break;
             }
@@ -107,12 +123,31 @@ public class UserInterface {
         }
     }
 
+    public void printTasks(){
+        process.getAllContacts().forEach(System.out::println);
+    }
+
     public int getUpdateMenuOption(){
         return getOptions(3);
     }
 
     public int getMainMenuOption(){
-        return getOptions(5);
+        return getOptions(6);
+    }
+
+    public int getIDOptions(){
+        return getOptions(process.getAllContacts().size());
+    }
+
+    public void searchContacts(){
+        System.out.println("Enter keyword of the contact you want to search for: ");
+        String keyword = getStringInput();
+        List<Contact> tmpList = process.searchContact(keyword);
+        if(tmpList.isEmpty()){
+            System.out.println("No contacts found!");
+            return;
+        }
+        tmpList.forEach(System.out::println);
     }
 
     public int getOptions(int limit){
