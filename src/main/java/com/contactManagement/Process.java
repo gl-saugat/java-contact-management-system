@@ -1,5 +1,11 @@
 package com.contactManagement;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Process {
@@ -7,9 +13,37 @@ public class Process {
 
     public HashMap<Integer, Contact> contacts;
 
+    ObjectMapper mapper = new ObjectMapper();
+
+    private File file;
+
+
     public Process(){
+
         contacts = new HashMap<>();
+
+        Path filePath = Paths.get("contacts.json");
+        createNewFile(filePath);
+        file = filePath.toFile();
+
+
     }
+
+    private void createNewFile(Path filePath){
+        try{
+            if(Files.notExists(filePath)){
+                Files.createFile(filePath);
+                System.out.println("New File Created!");
+            }
+            System.out.println("File found.");
+
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+    }
+
+
 
     public void addContact(int id, String name, String phone, String mail){
         Contact contact = new Contact("#"+id, name, phone, mail);
@@ -54,6 +88,10 @@ public class Process {
 
     public List<Contact> searchContact(String keyword){
         return contacts.values().stream().filter(c -> c.compareKeyword(keyword)).toList();
+    }
+
+    private void saveToJson(){
+
     }
 
 
