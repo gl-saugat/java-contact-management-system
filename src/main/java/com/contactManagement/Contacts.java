@@ -1,13 +1,16 @@
 package com.contactManagement;
 
-public class Contact {
+public class Contacts {
 
     private String id;
     private String name;
     private String phone;
     private String email;
 
-    public Contact(String id, String name, String phone, String email){
+    public Contacts() {
+    }
+
+    public Contacts(String id, String name, String phone, String email){
         this.id = id;
         this.name = name;
         this.phone = phone;
@@ -48,6 +51,6 @@ public class Contact {
 
     @Override
     public String toString(){
-        return this.id + " Name: " +this.name+ " Phone: " + this.phone + "E-mail: " + this.email;
+        return this.id + " Name: " +this.name+ " Phone: " + this.phone + " E-mail: " + this.email;
     }
 }

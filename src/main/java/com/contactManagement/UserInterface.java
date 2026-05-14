@@ -49,6 +49,7 @@ public class UserInterface {
 
                 case 6:
                     System.out.println("Thanks for trying the app.");
+                    process.saveContacts();
                     return;
             }
         }
@@ -142,7 +143,7 @@ public class UserInterface {
     public void searchContacts(){
         System.out.println("Enter keyword of the contact you want to search for: ");
         String keyword = getStringInput();
-        List<Contact> tmpList = process.searchContact(keyword);
+        List<Contacts> tmpList = process.searchContact(keyword);
         if(tmpList.isEmpty()){
             System.out.println("No contacts found!");
             return;

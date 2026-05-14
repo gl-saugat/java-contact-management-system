@@ -1,5 +1,6 @@
 package com.contactManagement;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
@@ -11,7 +12,7 @@ import java.util.*;
 public class Process {
 
 
-    public HashMap<Integer, Contact> contacts;
+    public HashMap<Integer, Contacts> contacts;
 
     ObjectMapper mapper = new ObjectMapper();
 
@@ -24,9 +25,9 @@ public class Process {
 
         Path filePath = Paths.get("contacts.json");
         createNewFile(filePath);
-        file = filePath.toFile();
+        this.file = filePath.toFile();
 
-
+        loadContacts();
     }
 
     private void createNewFile(Path filePath){
@@ -34,8 +35,10 @@ public class Process {
             if(Files.notExists(filePath)){
                 Files.createFile(filePath);
                 System.out.println("New File Created!");
+            }else {
+                System.out.println("File found.");
             }
-            System.out.println("File found.");
+
 
         }catch (Exception e){
             System.out.println(e.getMessage());
@@ -46,7 +49,7 @@ public class Process {
 
 
     public void addContact(int id, String name, String phone, String mail){
-        Contact contact = new Contact("#"+id, name, phone, mail);
+        Contacts contact = new Contacts("#"+id, name, phone, mail);
         contacts.put(id, contact);
     }
 
@@ -60,7 +63,7 @@ public class Process {
     }
 
     public void updateContacts(int id, int option, String change ) throws TaskNotFoundException{
-        Contact contact = getTaskById(id).orElseThrow(() -> new TaskNotFoundException("Task Not Found!"));
+        Contacts contact = getTaskById(id).orElseThrow(() -> new TaskNotFoundException("Task Not Found!"));
         switch (option){
             case 1: contact.changeName(change);
             case 2: contact.changePhone(change);
@@ -68,14 +71,14 @@ public class Process {
         }
     }
 
-    public Optional<Contact> getTaskById(int id){
+    public Optional<Contacts> getTaskById(int id){
         return contacts.entrySet().stream()
                 .filter(e -> e.getKey().equals(id))
                 .map(Map.Entry::getValue)
                 .findFirst();
     }
 
-    public List<Contact> getAllContacts(){
+    public List<Contacts> getAllContacts(){
         return contacts.values().stream().toList();
     }
 
@@ -86,12 +89,42 @@ public class Process {
                 .get() +1;
     }
 
-    public List<Contact> searchContact(String keyword){
+    public List<Contacts> searchContact(String keyword){
         return contacts.values().stream().filter(c -> c.compareKeyword(keyword)).toList();
     }
 
-    private void saveToJson(){
+    public void saveContacts(){
+        try{
+            List<Contacts> toLoadContacts= getAllContacts();
 
+            if(toLoadContacts.isEmpty()){
+                return;
+            }
+
+            mapper.writerWithDefaultPrettyPrinter()
+                    .writeValue(file,toLoadContacts);
+
+        }catch (Exception e){
+            System.out.println("Writing Error is: " + e.getMessage());
+        }
+    }
+
+    private void loadContacts(){
+        try{
+            if(!file.exists() || file.length() ==0){
+                return;
+            }
+
+            List<Contacts> loadedContacts = mapper.readValue(file, new TypeReference<List<Contacts>>() {
+            });
+
+            for(Contacts contact : loadedContacts){
+                contacts.put(getNextNumber(), contact);
+            }
+
+        }catch(Exception e){
+            System.out.println("Writing error is: " + e.getMessage());
+        }
     }
 
 
