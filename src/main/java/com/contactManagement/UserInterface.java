@@ -22,7 +22,7 @@ public class UserInterface {
             switch (menuInput){
                 case 1:
                     contactAddMenu();
-                    System.out.println("Contact added!");
+
                     break;
 
                 case 2:
@@ -75,9 +75,14 @@ public class UserInterface {
         System.out.println("Enter their phone number: ");
         String phone = getStringInput();
         System.out.println("Enter their mail address: ");
-        String mail = getStringInput();
+        String mail = getEmailInput();
         int id = process.getNextNumber();
-        process.addContact(id ,name, phone, mail);
+        try{
+            process.addContact(id ,name, phone, mail);
+            System.out.println("Contact added!");
+        }catch(Exception e){
+            System.out.println(e.getMessage() + " Contact Not Added.");
+        }
     }
 
     public void contactDeleteMenu(){
@@ -87,7 +92,7 @@ public class UserInterface {
         try{
             process.deleteContact(id);
             System.out.println("Task deleted.");
-        }catch (TaskNotFoundException e){
+        }catch (ContactNotFoundException e){
             System.out.println("Please enter the valid ID.");
         }
     }
@@ -119,7 +124,7 @@ public class UserInterface {
 
         try{
             process.updateContacts(updateID, updateOption,updatedInfo);
-        }catch (TaskNotFoundException e){
+        }catch (ContactNotFoundException e){
             System.out.println(e.getMessage());
         }
     }
@@ -179,6 +184,17 @@ public class UserInterface {
             }catch (Exception e){
                 System.out.println(e.getMessage());
             }
+        }
+    }
+
+    public String getEmailInput(){
+        while(true){
+            String input = getStringInput();
+            if(input.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")){
+                return input;
+            }
+            System.out.println("Invalid format. Should be as 'example@mail.com'");
+
         }
     }
 

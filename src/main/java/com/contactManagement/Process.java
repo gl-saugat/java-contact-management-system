@@ -48,22 +48,29 @@ public class Process {
 
 
 
-    public void addContact(int id, String name, String phone, String mail){
+    public void addContact(int id, String name, String phone, String mail) throws ContactAlreadyExists {
         Contacts contact = new Contacts("#"+id, name, phone, mail);
+
+        boolean found = contacts.values().stream().anyMatch(v-> v.equals(contact));
+
+        if (found) {
+            throw new ContactAlreadyExists("Contact already exists.");
+        }
+
         contacts.put(id, contact);
     }
 
-    public void deleteContact(int id) throws TaskNotFoundException{
+    public void deleteContact(int id) throws ContactNotFoundException {
         if(getTaskById(id).isPresent()){
             contacts.remove(id);
         }else{
-            throw new TaskNotFoundException("Task Not Found.");
+            throw new ContactNotFoundException("Task Not Found.");
         }
 
     }
 
-    public void updateContacts(int id, int option, String change ) throws TaskNotFoundException{
-        Contacts contact = getTaskById(id).orElseThrow(() -> new TaskNotFoundException("Task Not Found!"));
+    public void updateContacts(int id, int option, String change ) throws ContactNotFoundException {
+        Contacts contact = getTaskById(id).orElseThrow(() -> new ContactNotFoundException("Task Not Found!"));
         switch (option){
             case 1: contact.changeName(change);
             case 2: contact.changePhone(change);

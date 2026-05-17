@@ -1,5 +1,7 @@
 package com.contactManagement;
 
+import java.util.Objects;
+
 public class Contacts {
 
     private String id;
@@ -16,6 +18,8 @@ public class Contacts {
         this.phone = phone;
         this.email = email;
     }
+
+
 
     public String getName(){
         return this.name;
@@ -46,7 +50,32 @@ public class Contacts {
     }
 
     public boolean compareKeyword(String keyword){
-        return(getName().contains(keyword) || getPhone().contains(keyword)|| getEmail().contains(keyword));
+        return(getName().contains(keyword.toLowerCase()) || getPhone().contains(keyword.toLowerCase())|| getEmail().contains(keyword.toLowerCase()));
+    }
+
+    @Override
+    public boolean equals(Object obj){
+
+        if(this == obj){
+            return true;
+        }
+
+        if(obj == null || getClass() != obj.getClass()){
+            return false;
+        }
+
+        Contacts tmpContact = (Contacts) obj;
+
+        return  name.equals(tmpContact.getName()) &&
+                phone.equals(tmpContact.getPhone())&&
+                email.equals(tmpContact.getEmail());
+
+
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(name,phone, email);
     }
 
     @Override
